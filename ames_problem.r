@@ -58,3 +58,125 @@ for(i in 68:73){
     hist( ames[,i], main = paste("Histogram of", colnames(ames)[i]) )
     dev.off()
 }
+
+#create a natural log of Price (natural log is 2.71 followed by blah blah blah)
+
+logPrice = log(SalePrice)
+
+#First, re-scale the y-axis of your histogram using the following statement
+#The argument prob=T changes the y-axis so that the total area of the bars of the histogram is 1 
+# (rather than the number of houses in the data). This makes it easier to compare it to a probability 
+# distribution (because the total probability of a randomly selected house costing some price should add up to 1).
+
+hist(logPrice, prob=T)
+# abline(v=mean(logPrice),col="red",lwd=2)
+# abline(v=median(logPrice),col="blue",lwd=2)
+curve(dnorm(x, mean(logPrice), sd(logPrice)),add = T,col="green" )
+
+# House sale prices (in dollars) and the above-ground living area (in square feet) 
+# are both quantitative variables, so it makes sense to compute their correlation. 
+
+#What is the correlation between sale price and living area? 
+cor(SalePrice,Gr.Liv.Area)
+#0.7067799
+#What is the correlation between sale price and living area? 
+
+# This correlation means that the linear relationship between sale price and living area in Ames, Iowa is...
+
+# A. Fairly weak 
+# B. Extremely strong 
+# C. Moderately strong >>>>>THIS ONE 
+# Which of these interpretations of the correlation is correct?
+
+# A. Larger houses tend to cost more. >>>>>THIS ONE (never use the term "CAUSE" or its derivations in correlation) 
+# B. Increasing the area of a house causes the price to increase. 
+# C. Larger houses tend to cost less. 
+# D. We cannot say anything about the direction of the relationship based on the correlation.
+
+
+
+# A scatterplot is the best type of graph for visualizing 
+# the relationship between two continuous variables. There are two basic ways to make a scatterplot in R:
+plot(x, y)
+plot(y ~ x)
+
+# These produce the same graph, but they list the variables in opposite orders.
+# Regardless of which syntax you use to make the scatterplot, 
+# the x variable should be the predictor variable--the variable that is known (or known first), 
+# or the variable whose value you can control. The y variable should be the response variable--the 
+# variable whose value you’re trying to estimate, predict, or model.
+# If you are told to “plot B as a function of A”, that means that A should be x and B should be y 
+# (because in math, yy is often treated as a function of xx and written as y=f(x)y=f(x)). 
+# If you are told to “plot B versus A”, that usually means that A should be x and B should be y (but sometimes people are sloppy about this).
+
+# Plot sales price versus above-ground living area. Select the letter of the matching graph.
+
+plot(Gr.Liv.Area,SalePrice) #y is the variable I want to predict,i.e. SalePrice
+
+
+# Let’s say we want black to represent “Y” (has central air conditioning) 
+# and we want red to represent “N” (no central air conditioning). 
+# There are 2930 houses in the data set (we can find this using length(Central.Air)), 
+# so we can start by making a vector filled with 2930 copies of the word “black”:
+mycolors = rep( "black", 2930 )
+# rep repeats the first argument as many times as you tell it in the second argument.
+
+
+#create variable with INDEX numbers to change to the color RED
+toChange = which(Central.Air == "N") 
+
+# The first element of toChange turns out to be 83. So we want to change 
+# the 83rd element of mycolors to be “red”. We know that we could 
+# do that using square bracket notation:
+mycolors[83] = "red"
+# But square bracket notation also works for vectors of indices. 
+# So we can change all of the toChange elements of mycolors at once, using the code
+mycolors[ toChange ] = "red"
+# Then make the scatterplot using the new colors:
+
+plot( Gr.Liv.Area, SalePrice, col = mycolors )
+
+# We can see that houses without central air conditioning tend to be less expensive 
+# than similar-sized houses with central air conditioning. 
+# Also, all of the very large houses have central air conditioning.
+# Try to add a legend to the scatterplot to explain the meaning of the colors.
+
+#this code:
+
+between300and600_hard = vector()
+
+for(index in 1:length(SalePrice)){
+	if ((SalePrice[index] >200000) & (SalePrice[index] < 300000)){
+		between300and600_hard  = c(between300and600_hard,index)
+	}
+
+}
+
+#is the same as: 
+
+
+between300and600 = which((SalePrice >200000) & (SalePrice < 300000))
+
+
+
+# Barplots are the most appropriate way to graph categorical variables. They can either be used to plot quantitative information for different categories (such as the mean price of houses with and without air conditioning), or to plot the frequency of each category.
+# Fireplaces is a discrete, numerical variable that tells how many fireplaces each house has. Let’s make a bar plot of the number of houses with 0, 1, 2, 3, or 4 fireplaces. First, use the table function to count the number of houses in each category:
+
+counts = table(Fireplaces)
+
+How many houses in the data set had 1 fireplace?
+
+# 1274
+# Then make the barplot:
+# barplot( counts )
+barplot(counts, xlab="Number of Fireplaces", ylab="Number of Houses", main="Houses with Fireplaces")
+
+
+# What if we want a graphical representation of 2 categorical variables at the same time? Barplots can be used for that too!
+# Let’s make a bar plot of the number of houses with 0, 1, 2, 3, or 4 fireplaces, and with or without air conditioning. First, use the table function to count the number of houses in each category:
+counts = table(Central.Air, Fireplaces)
+
+
+# Then make the barplot:
+barplot( counts, col = c("red", "blue"))
+legend("topright", legend = c("Houses With Central Air", "Houses with Fireplaces"), col=c("red","blue"), lwd = 2)
