@@ -1,4 +1,9 @@
-ames = read.csv("C:/Users/dmarkham/Code/UWEC/Programming/Week3/PracticeActivity/AmesHousing.csv")
+#workcomp
+# ames = read.csv("C:/Users/dmarkham/Code/UWEC/Programming/Week3/PracticeActivity/AmesHousing.csv")
+
+#personal_windows_side
+ames = read.csv("C:/Users/Daniel/UWEC/Fall2016/Programming/Week3/Week3_PracticeActivity/AmesHousing.csv")
+
 
 attach(ames)
 
@@ -180,3 +185,62 @@ counts = table(Central.Air, Fireplaces)
 # Then make the barplot:
 barplot( counts, col = c("red", "blue"))
 legend("topright", legend = c("Houses With Central Air", "Houses with Fireplaces"), col=c("red","blue"), lwd = 2)
+
+
+# In this case, all of the sale prices we wanted to compare were in a single vector (SalePrice), and we used another vector (Central.Air) to tell which elements belonged to which group. Sometimes, we will instead want to compare values for which each group is stored in a different vector.
+# For example, suppose we want to compare the area (in square feet) on the first floor versus the second floor of homes. These values are stored in the variables X1st.Flr.SF and X2nd.Flr.SF. We can use the following code to make the boxplots:
+#     boxplot( X1st.Flr.SF, X2nd.Flr.SF )
+# Notice that for groups stored in different variables we use a comma, while for groups stored in the same variable we used a tilde.
+boxplot( X1st.Flr.SF, X2nd.Flr.SF, names=c("1st floor","2nd floor") )
+
+# Let’s use stacked histograms to compare the sale prices of houses with and without 
+# central air conditioning. The first step is to create a new variable containing the 
+# sale prices of houses with A/C, and a separate variable containing the sale prices 
+# of houses without A/C. Try doing this with the which function.
+
+
+# noAC = which(Central.Air == "N") 
+# yesAC = which(Central.Air == "Y")
+
+
+noACSalePrices = SalePrice[which(Central.Air == "N")]
+noACSalePrices
+
+yesACSalePrices = SalePrice[which(Central.Air == "Y")]
+yesACSalePrices
+
+# Now we need to prepare the graphing window to plot two graphs in the same window, one above the other. Type
+par( mfrow = c( 2, 1 ) )
+# This prepares the graphing window to plot graphs in 2 rows and 1 column.
+# Now plot the histograms. To enable comparison of the distributions, 
+# use xlim to set the same span of the horizontal axis for each graph.
+
+
+hist(noACSalePrices,xlim = c(0,1000000))
+hist(yesACSalePrices,xlim = c(0,1000000))
+
+
+
+# In the previous problem, you made stacked histograms to compare the distributions of sale prices for houses with and without air conditioning. In this problem, we’ll use side-by-side histograms for the same comparison.
+# The function for creating side-by-side histograms is in the plotrix package. The first time you use this package, you’ll need to install it by typing
+install.packages( "plotrix")
+# (If R asks you which server to download it from, you can choose any of the options, just like when you installed R. I usually choose 0-Cloud.)
+# After the package is installed, you need to load it by typing
+library( plotrix )
+# You’ll need to do this every time you start a new session of R when you want to make side-by-side histograms.
+# To make the histogram, use
+
+multhist( list(yesACSalePrices, noACSalePrices), col=c("blue", "red") )
+
+# Notice that because the number of houses with air conditioning is so much larger than the number 
+# of houses without it, it’s hard to compare the proportions of houses at each price level. 
+# We can correct this by re-scaling the y-axis to refer to probabilities rather 
+# than absolute numbers of houses. We do this by setting “frequency” (absolute counts) to FALSE:
+multhist( list(yesACSalePrices, noACSalePrices), freq = F, col=c("blue", "red") )
+legend("topright", legend = c("No A/C", "With A/C"), fill = c("red", "blue"))
+
+# What does this side-by-side histogram shows us?
+
+# A. There are no houses without A/C that cost more than 180,000 dollars. 
+# B. Houses without A/C are more likely to cost less than 180,000 dollars, compared to houses with A/C. 
+# C. There are more houses without A/C that cost less than 180,000 dollars, compared to houses with A/C.
